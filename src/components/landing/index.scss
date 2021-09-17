@@ -1,0 +1,15 @@
+.landing {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  // width: 600px;
+  margin-top: 200px;
+}
+
+.ant-form-item-control-input-content .ant-input {
+  width: 300px;
+}
+
+.ant-input-affix-wrapper.ant-input-password {
+  width: 300px;
+}

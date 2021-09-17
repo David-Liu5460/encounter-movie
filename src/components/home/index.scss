@@ -1,8 +1,114 @@
 @import '~antd/dist/antd.css';
 
 .home-page {
+  .home-page-title {
+    background-color: #f0f2f7;
+    text-align: center;
+    padding: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    font-family: 'Times New Roman', Times, serif;
+    // height: 500px;
+    .title-img {
+      height: 100px;
+      margin: auto 20px;
+    }
+    
+    .home-page-desc {
+      display: inline-block;
+      .home-page-hello {
+        position: relative;
+        top: 10px;
+        word-break: break-all;
+        display: block; 
+      }
+    }
+  }
+
+  .detail-img {
+    width: 600px;
+    height: 400px;
+  }
   .home-page-img {
-    width: 300px;
+    width: 400px;
     height: 200px;
+  }
+   
+  .button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    font-family: "OpenSans-Regular", "PingFang-Medium", Roboto, sans-serif,
+      Microsoft YaHei;
+    font-weight: 600;
+    line-height: 12px;
+    letter-spacing: 0.2px;
+    // color: #666;
+  }
+
+  .page-body {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    align-self: center;
+    .page-body-item {
+      background-color: #fff;
+      margin: 16px;
+      border: 1px solid #f0f0f0;
+      padding: 14px;
+      &:hover {
+        -webkit-transform: translateY(-3px);
+        -ms-transform: translateY(-3px);
+        transform: translateY(-3px);
+        -webkit-box-shadow: 0 0 6px #999;
+        box-shadow: 0 0 6px #999;
+        -webkit-transition: all .5s ease-out;
+        transition: all .5s ease-out;
+      }
+      .button {
+        margin-left: 225px;
+        display: inline-block;
+        
+      }
+
+      .end-time {
+        margin-right: 140px;
+      }
+
+      .item-name {
+        min-height: 50px;
+        margin-bottom: 16px;
+        color: #0d1a26;
+        font-weight: 400;
+        white-space: normal;
+        text-overflow: initial;
+        word-break: break-word;
+        font-size: 16px;
+        font-weight: bold;
+      }
+  
+      .item-box {
+        margin-bottom: 8px;
+      }
+
+      .item-desc {
+        color: #697b8c;
+        font-size: 14px;
+        font-variant: tabular-nums;
+        line-height: 1.5715;
+        list-style: none;
+        font-feature-settings: "tnum";
+        font-family: -apple-system,BlinkMacSystemFont,segoe ui,Roboto,helvetica neue,Arial,noto sans,sans-serif,apple color emoji,segoe ui emoji,segoe ui symbol,noto color emoji;
+      }
+    } 
+  }
+  
+}
+
+.ant-tabs-nav-wrap {
+  justify-content: center;
+  .ant-tabs-tab-btn {
+    font-size: 24px;
   }
 }
