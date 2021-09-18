@@ -89,10 +89,14 @@ export default class Home extends PureComponent {
     let a = params.startTime;
     let b = params.expireTime;
     // debugger
-    console.log(params);
+    console.log(params, a, '===');
     const newParam = { ...params, startTime: a.valueOf(), expireTime: b.valueOf(), groupId }
     // debugger
     const res = await createEvent(newParam);
+    const resGroup = await QueryEventGroup({ groupId });
+    // this.setState({
+    //   movieList: resGroup.events, 
+    // })
     // debugger
     if (res.data.success) {
       message.success('众筹电影创建成功');
@@ -101,7 +105,8 @@ export default class Home extends PureComponent {
     }
 
     this.setState({
-      isModalVisible: false
+      isModalVisible: false,
+      movieList: resGroup.events
     })
   }
 
