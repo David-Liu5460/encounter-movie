@@ -54,6 +54,8 @@
     flex-wrap: wrap;
     align-self: center;
     .page-body-item {
+      width: 436px;
+      height: 400px;
       background-color: #fff;
       margin: 16px;
       border: 1px solid #f0f0f0;
@@ -68,13 +70,13 @@
         transition: all .5s ease-out;
       }
       .button {
-        margin-left: 225px;
+        margin-left: 180px;
         display: inline-block;
         
       }
 
       .end-time {
-        margin-right: 140px;
+        margin-right: 100px;
       }
 
       .item-name {

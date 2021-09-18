@@ -16,6 +16,11 @@ function Landing(props) {
 
   return (
     <div className="landing">
+      <div>
+        <img 
+        className={"landing-img"}
+        src="https://img.alicdn.com/imgextra/i4/O1CN01uRN6o7265QlhMYQBV_!!6000000007610-2-tps-1200-1040.png" alt=""/>
+      </div>
       <Form
         name="basic"
         labelCol={{ span: 8 }}

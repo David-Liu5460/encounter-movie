@@ -26,16 +26,17 @@ export default class Home extends PureComponent {
       cateList: [],
       movieList: [],
       selectMovies: [],
-      currentTabKey: "运动电影",
+      currentTabKey: "1",
       isModalVisible: false,
-      joinedArr: []
+      joinedArr: [],
+      groupId: 1
     }
   }
 
   async componentDidMount () {
     const cateList = await ListEventGroup();
     // debugger
-    const resGroup = await QueryEventGroup();
+    const resGroup = await QueryEventGroup({ groupId: 1});
     // debugger
     const selected = await listMovies();
     const joinedArr = [];
@@ -54,8 +55,16 @@ export default class Home extends PureComponent {
 
   }
 
-  handleTabClick(currentTabKey) {
-    console.log("=======", currentTabKey)
+  async handleTabClick(currentTabKey) {
+    console.log("=======", currentTabKey);
+    // debugger
+    this.setState({
+      groupId: ( Number(currentTabKey) + 1 )
+    })
+    const resGroup = await QueryEventGroup({ groupId: Number(currentTabKey) + 1});
+    this.setState({
+      movieList: resGroup.events, 
+    })
   }
   handleOk = () => {
     this.setState({
@@ -76,9 +85,16 @@ export default class Home extends PureComponent {
   }
   
   handleSubmit = async (params) => {
+    const { groupId } = this.state; 
+    let a = params.startTime;
+    let b = params.expireTime;
+    // debugger
     console.log(params);
-    const res = await createEvent(params);
-    if (res.success) {
+    const newParam = { ...params, startTime: a.valueOf(), expireTime: b.valueOf(), groupId }
+    // debugger
+    const res = await createEvent(newParam);
+    // debugger
+    if (res.data.success) {
       message.success('众筹电影创建成功');
     } else {
       message.error("创建失败");
@@ -90,36 +106,51 @@ export default class Home extends PureComponent {
   }
 
   handleJoin = async (eventId) => {
+    const { groupId } = this.state; 
     const { joinedArr } = this.state;
     // if (joinedArr.indexOf(eventId) > -1) {
     //   // 加入
     // }
     // 加入逻辑
-    const newJoined = [...joinedArr, eventId];
-    this.setState({
-      joinedArr: newJoined
-    })
     // const idx = joinedArr.indexOf(eventId); 
-    const res = await joinEvent(eventId);
-    debugger
+    const res = await joinEvent({ eventId });
+    // debugger
     if (res.data.success) {
       message.success("加入成功");
+      const newJoined = [...joinedArr, eventId];
+      this.setState({
+        joinedArr: newJoined
+      });
+
+      const resGroup = await QueryEventGroup({ groupId });
+      this.setState({
+        movieList: resGroup.events, 
+      })
+      
+
     } else {
       message.error("加入失败");
     }
   }
 
   handleBackUp = async (eventId) => {
-    debugger
-    const { joinedArr } = this.state;
+    // debugger
+    const { joinedArr, groupId } = this.state;
     const newJoined = [...joinedArr];
     const idx = joinedArr.indexOf(eventId); 
-    newJoined.splice(idx, 1);
-    this.setState({ joinedArr: newJoined });
 
-    const res = await quitEvent(eventId);
-    if (res.success) {
+    const res = await quitEvent({eventId});
+    // debugger
+    if (res.data.success) {
       message.success("退出成功");
+      newJoined.splice(idx, 1);
+      this.setState({ joinedArr: newJoined });
+
+      const resGroup = await QueryEventGroup({ groupId });
+      this.setState({
+        movieList: resGroup.events, 
+      })
+
     } else {
       message.error("退出失败");
     }
@@ -178,7 +209,7 @@ export default class Home extends PureComponent {
         <Tabs 
           defaultActiveKey="111" 
           // type="card"
-          onTabClick={this.handleTabClick}
+          onTabClick={this.handleTabClick.bind(this)}
           size={'large'}
         >
           {/* <TabPane tab="Card Tab 1" key="1">
@@ -193,7 +224,7 @@ export default class Home extends PureComponent {
           {
             (cateList || []).map((item, index) => {
               return (
-                <TabPane tab={item.eventGroupName} key={`item.evenGroupId${index}`}>
+                <TabPane tab={item.eventGroupName} key={`${index}`}>
                   {/* {item.eventGroupName} */}
                   <div>
                     <div className={"button"}>
@@ -203,6 +234,9 @@ export default class Home extends PureComponent {
                     <div className="page-body">
                       {
                         (movieList || []).map(item => {
+                          const endTime = new Date(item.endTime).format("yyyy-MM-dd");
+                          const startTime = new Date(item.startTime).format("yyyy-MM-dd");
+                          console.log(endTime);
                           return (
                             <div key={item.eventId} className="page-body-item">
                               <div>
@@ -214,13 +248,13 @@ export default class Home extends PureComponent {
                                 <div className="item-box">
                                   地址 : {item.address}
                                 </div>
-                                <div className="item-box">已众筹人数 : {item.userNumber}/{item.totalUserNumeber}</div>
+                                <div className="item-box">已众筹人数 : {item.userNumber}/{item.maxUserNumber}</div>
                               </div>
                               <div className="item-box">
                                 <span>开始时间: </span>
-                                <span className={"end-time"}>{item.startTime}</span>
+                                <span className={"end-time"}>{startTime}</span>
                                 <span>结束时间: </span>
-                                <span>{item.endTime}</span>
+                                <span>{endTime}</span>
                                 {/* <span>过期时间</span>
                                 <span>{item.expireTime}</span> */}
                               </div>
@@ -300,8 +334,8 @@ export default class Home extends PureComponent {
             </Form.Item>
 
             <Form.Item
-              label="totalUserNumeber"
-              name="totalUserNumeber"
+              label="maxUserNumber"
+              name="maxUserNumber"
               rules={[
                 {
                   required: true,
@@ -341,4 +375,25 @@ export default class Home extends PureComponent {
     )
   }
 }
+
+Date.prototype.format = function(fmt) { 
+  var o = { 
+     "M+" : this.getMonth()+1,                 //月份 
+     "d+" : this.getDate(),                    //日 
+     "h+" : this.getHours(),                   //小时 
+     "m+" : this.getMinutes(),                 //分 
+     "s+" : this.getSeconds(),                 //秒 
+     "q+" : Math.floor((this.getMonth()+3)/3), //季度 
+     "S"  : this.getMilliseconds()             //毫秒 
+ }; 
+ if(/(y+)/.test(fmt)) {
+         fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length)); 
+ }
+  for(var k in o) {
+     if(new RegExp("("+ k +")").test(fmt)){
+          fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+      }
+  }
+ return fmt; 
+} 
 
